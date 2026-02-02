@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const InitBoard = [null, null, null, null, null, null, null, null, null];
-const WIN_LINES: number[][] = [
+const WIN_LINES = [
   [0, 1, 2],
   [3, 4, 5],
   [6, 7, 8],
@@ -10,7 +10,7 @@ const WIN_LINES: number[][] = [
   [2, 5, 8],
   [0, 4, 8],
   [2, 4, 6],
-];
+] as const;
 
 export const Play = () => {
   const [player, setPlayer] = useState("⭕️");
@@ -18,7 +18,7 @@ export const Play = () => {
   const [win, setWin] = useState(false);
   const checkWin = () => {
     if (win) return;
-    WIN_LINES.forEach((line: number[]) => {
+    WIN_LINES.forEach((line) => {
       const firstCell = board[line[0]];
       if (
         firstCell &&
