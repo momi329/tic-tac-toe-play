@@ -11,13 +11,15 @@ const WIN_LINES = [
   [0, 4, 8],
   [2, 4, 6],
 ] as const;
+type GameStatus = "playing" | "finished" | "draw";
 
 export const Play = () => {
-  const [player, setPlayer] = useState("⭕️");
-  const [board, setBoard] = useState(InitBoard);
-  const [win, setWin] = useState(false);
+  const [player, setPlayer] = useState<"⭕️" | "❌">("⭕️");
+  const [board, setBoard] = useState<("⭕️" | "❌" | null)[]>(InitBoard);
+  const [gameStatus, setGameStatus] = useState<GameStatus>("playing");
   const checkWin = () => {
-    if (win) return;
+    if (gameStatus !== "playing") return;
+
     WIN_LINES.forEach((line) => {
       const firstCell = board[line[0]];
       if (
@@ -26,14 +28,18 @@ export const Play = () => {
         firstCell === board[line[2]]
       ) {
         console.log("Winner is", firstCell);
-        setWin(true);
+        setGameStatus("finished");
+      }
+      if (board.filter((cell) => cell === null).length === 0) {
+        setGameStatus("draw");
       }
     });
   };
   checkWin();
   const clickedCell = (cell: null | string, index: number) => {
     if (cell) return;
-    if (win) return;
+    if (gameStatus !== "playing") return;
+
     setBoard((prev) => {
       const newBoard = [...prev];
       newBoard[index] = player;
@@ -47,11 +53,13 @@ export const Play = () => {
   };
   return (
     <div>
-      <div className="m-2">Now Playing:{player}</div>
+      <div className="m-2">
+        Now Playing : {player}｜win：{`${gameStatus}`}
+      </div>
       <div className="grid grid-cols-3">
         {board.map((cell, index) => (
           <div
-            className="flex items-center justify-center w-20 h-20 border border-black"
+            className="m-0 flex items-center justify-center w-20 h-20 border border-black"
             key={index}
             onClick={() => clickedCell(cell, index)}
           >
